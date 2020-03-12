@@ -1,6 +1,11 @@
 package watertank.utils;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.http.converter.HttpMessageNotReadableException;
+import org.springframework.validation.BindingResult;
+import org.springframework.validation.FieldError;
+import org.springframework.validation.ObjectError;
+import org.springframework.web.bind.MethodArgumentNotValidException;
 
 import javax.validation.ConstraintViolation;
 import javax.validation.ConstraintViolationException;
@@ -18,7 +23,7 @@ public class ErrorUtil {
         return body;
     }
 
-    private static List<String> getErrorMessages(final Exception ex){
+    private static List<String> getErrorMessages(Exception ex){
         String exceptionType = ex.getClass().getSimpleName();
         List<String> errorMessages = new ArrayList<>();
 
@@ -28,6 +33,21 @@ public class ErrorUtil {
                 break;
             case "MissingServletRequestParameterException":
                 errorMessages.add(ex.getMessage());
+                break;
+            case "HttpMessageNotReadableException":
+                errorMessages.add(((HttpMessageNotReadableException) ex).getMessage());
+                break;
+            case "MethodArgumentNotValidException":
+                Iterator<FieldError> fieldErrorsIterator = ((MethodArgumentNotValidException) ex).getBindingResult().getFieldErrors().iterator();
+
+                while(fieldErrorsIterator.hasNext()) {
+                    FieldError fieldError = fieldErrorsIterator.next();
+
+                    String errorMessage = fieldError.getDefaultMessage();
+
+                    errorMessages.add(errorMessage);
+                }
+
                 break;
             case "ConstraintViolationException":
                 Throwable resultCause = ex;

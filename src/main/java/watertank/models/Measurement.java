@@ -18,7 +18,7 @@ public class Measurement {
     @NotNull(message = "waterLevelDistance may not be null")
     @PositiveOrZero(message = "waterLevelDistance should be positive or 0")
     @Max(400)
-    private int waterLevelDistance;
+    private Integer waterLevelDistance;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
