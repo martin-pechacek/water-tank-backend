@@ -26,7 +26,7 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>ERROR_%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/archive/errors/ERROR_%d{yyyyMMdd}.%i.log</fileNamePattern>
             <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>60</maxHistory>
@@ -52,7 +52,7 @@
 
         <rollingPolicy class="ch.qos.logback.core.rolling.SizeAndTimeBasedRollingPolicy">
             <!-- rollover daily -->
-            <fileNamePattern>MAIN_%d{yyyyMMdd}.%i.log</fileNamePattern>
+            <fileNamePattern>logs/archive/main/MAIN_%d{yyyyMMdd}.%i.log</fileNamePattern>
             <!-- each file should be at most 100MB, keep 60 days worth of history, but at most 20GB -->
             <maxFileSize>100MB</maxFileSize>
             <maxHistory>60</maxHistory>
