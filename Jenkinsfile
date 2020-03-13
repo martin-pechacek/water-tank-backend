@@ -13,6 +13,6 @@ node {
     }
 
     stage("Build") {
-         sh "mvn package -Dmaven.test.skip=true"
+         sh "mvn package -e -Dmaven.test.skip=true"
     }
 }
