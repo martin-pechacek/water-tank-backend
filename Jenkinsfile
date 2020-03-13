@@ -11,4 +11,8 @@ node {
     stage("JUnit") {
          sh "mvn clean test"
     }
+
+    stage("Build") {
+         sh "mvn clean package"
+    }
 }
