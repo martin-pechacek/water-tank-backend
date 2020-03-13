@@ -5,7 +5,7 @@ node {
     }
 
     stage("set application.properties") {
-        build job: 'Set application.properties', parameters: [[$class: 'StringParameterValue', name: 'BRANCH', value: ${BRANCH_NAME}]]
+        build job: 'Set application.properties', parameters: [[$class: 'StringParameterValue', name: 'BRANCH', value: $BRANCH_NAME]]
     }
 
     stage("test") {
