@@ -5,7 +5,7 @@ node {
     }
 
     stage("set application.properties") {
-        build job: 'Set application.properties', parameters: [[$class: 'StringParameterValue', name: 'BRANCH', value: ${GIT_BRANCH}]]
+        build job: 'Set application.properties', parameters: [[$class: 'StringParameterValue', name: 'BRANCH', value: ${BRANCH}]]
     }
 
     stage("test") {
