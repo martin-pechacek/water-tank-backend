@@ -5,10 +5,10 @@ node {
     }
 
     stage("set application.properties") {
-        sh 'echo env.BRANCH_NAME'
-        sh 'echo $env.BRANCH_NAME'
-        sh 'echo ${env.BRANCH_NAME}'
         sh 'echo ${BRANCH_NAME}'
+        sh 'echo $BRANCH_NAME'
+        sh 'echo ${env.BRANCH_NAME}'
+
         build job: 'Set application.properties', parameters: [[$class: 'StringParameterValue', name: 'BRANCH', value: env.BRANCH_NAME]]
     }
 
