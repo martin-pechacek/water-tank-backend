@@ -5,9 +5,8 @@ node {
     }
 
     stage("set application.properties") {
-        sh 'echo ${GIT_BRANCH}'
-        sh 'echo $GIT_BRANCH'
-        sh 'echo ${env.BRANCH_NAME}'
+
+        sh 'printenv'
 
         build job: 'Set application.properties', parameters: [[$class: 'StringParameterValue', name: 'BRANCH', value: env.BRANCH_NAME]]
     }
