@@ -8,7 +8,7 @@ node {
 
         sh 'printenv'
         sh 'echo $JOB_NAME'
-        build job: 'Set application.properties', parameters: [[$class: 'StringParameterValue', name: 'TRIGGERED_BY_JOB', value: $env.JOB_NAME]]
+        build job: 'Set application.properties', parameters: [[$class: 'StringParameterValue', name: 'TRIGGERED_BY_JOB', value: String.valueOf(JOB_NAME)]]
     }
 
     stage("test") {
