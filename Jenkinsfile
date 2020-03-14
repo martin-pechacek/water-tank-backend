@@ -1,4 +1,5 @@
 node {
+
     stage("Checkout") {
         deleteDir()
         checkout scm
@@ -13,7 +14,11 @@ node {
     }
 
     stage("Build") {
-         sh "mvn package -Dmaven.test.skip=true"
+        if(String.valueOf(JOB_NAME).contains("master"){
+            sh "mvn package -Pprod -Dmaven.test.skip=true"
+        } else {
+            sh "mvn package -Dmaven.test.skip=true"
+        }
     }
 
     stage("Deploy") {
