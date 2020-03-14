@@ -153,6 +153,7 @@
                             <goal>single</goal>
                         </goals>
                         <configuration>
+                            <finalName>${project.artifactId}</finalName>
                             <archive>
                                 <manifest>
                                     <mainClass>
