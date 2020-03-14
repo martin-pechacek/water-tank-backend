@@ -15,4 +15,8 @@ node {
     stage("Build") {
          sh "mvn package -Dmaven.test.skip=true"
     }
+
+    stage("Deploy") {
+        build job: 'Deploy Water Tank', parameters: [[$class: 'StringParameterValue', name: 'TRIGGERED_BY_JOB', value: String.valueOf(JOB_NAME)]]
+    }
 }
