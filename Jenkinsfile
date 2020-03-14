@@ -14,7 +14,7 @@ node {
     }
 
     stage("Build") {
-        if(String.valueOf(JOB_NAME).contains("master"){
+        if(String.valueOf(JOB_NAME).contains("master")){
             sh "mvn package -Pprod -Dmaven.test.skip=true"
         } else {
             sh "mvn package -Dmaven.test.skip=true"
