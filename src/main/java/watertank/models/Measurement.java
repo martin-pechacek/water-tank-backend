@@ -1,6 +1,7 @@
 package watertank.models;
 
 import org.hibernate.annotations.CreationTimestamp;
+import watertank.enums.Distance;
 
 import javax.persistence.*;
 import javax.validation.constraints.*;
@@ -17,7 +18,7 @@ public class Measurement {
     @Column(name = "water_level_distance")
     @NotNull(message = "waterLevelDistance may not be null")
     @PositiveOrZero(message = "waterLevelDistance should be positive or 0")
-    @Max(400)
+    @Max(260)
     private Integer waterLevelDistance;
 
     @Column(name = "created_at", updatable = false)
