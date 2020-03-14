@@ -5,6 +5,7 @@ import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 import org.springframework.web.bind.annotation.*;
 import org.springframework.beans.factory.annotation.Autowired;
+import watertank.enums.Distance;
 import watertank.repositories.MeasurementRepository;
 import watertank.models.Measurement;
 
@@ -18,7 +19,17 @@ public class MeasurementController {
 
     @PostMapping(path="/measurements", consumes = MediaType.APPLICATION_JSON_VALUE)
     @ResponseStatus(HttpStatus.CREATED)
-    public Measurement addMeasurement(@Valid @RequestBody final Measurement measurement) {
+    public Measurement addMeasurement(@Valid @RequestBody Measurement measurement) {
+        // There is needed to calculate real water level distance based on spillway distance from ultrasonic sensor
+        int measuredWaterLevelDistance = measurement.getWaterLevelDistance();
+        int maxWaterLevel = Distance.ULTRASONIC_SENSOR.getDistance() - Distance.SPILLWAY.getDistance();
+
+        int realWaterLevelDistance = measuredWaterLevelDistance - maxWaterLevel;
+
+
+
+        measurement.setWaterLevelDistance(realWaterLevelDistance);
+
         return repository.save(measurement);
     }
 
