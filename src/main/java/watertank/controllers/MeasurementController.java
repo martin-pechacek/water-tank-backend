@@ -43,18 +43,4 @@ public class MeasurementController {
     public Optional<Measurement> getMeasurement(@PathVariable Long id) {
         return repository.findById(id);
     }
-
-
-    /**
-     * @param id id of measurement
-     * @return measurement object with waterLevelDistance as percentage of tank fullness
-     */
-    @GetMapping(path="/measurements/{id}/percentage")
-    public Measurement getTankFullness(@PathVariable Long id) {
-        Measurement measurement = repository.findById(id).get();
-
-        int distance = measurement.getWaterLevelDistance();
-
-        return measurement;
-    }
 }
