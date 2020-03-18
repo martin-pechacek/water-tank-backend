@@ -10,6 +10,7 @@ import watertank.repositories.MeasurementRepository;
 import watertank.models.Measurement;
 
 import javax.validation.Valid;
+import java.util.Optional;
 
 @RestController
 @RequestMapping(path="/api")
@@ -26,8 +27,6 @@ public class MeasurementController {
 
         int realWaterLevelDistance = measuredWaterLevelDistance - maxWaterLevel;
 
-
-
         measurement.setWaterLevelDistance(realWaterLevelDistance);
 
         return repository.save(measurement);
@@ -38,5 +37,24 @@ public class MeasurementController {
         return numberOfLatestRecords == null
                 ? repository.findAll()
                 : repository.findLatestXRecords(PageRequest.of(0, numberOfLatestRecords));
+    }
+
+    @GetMapping(path="/measurements/{id}")
+    public Optional<Measurement> getMeasurement(@PathVariable Long id) {
+        return repository.findById(id);
+    }
+
+
+    /**
+     * @param id id of measurement
+     * @return measurement object with waterLevelDistance as percentage of tank fullness
+     */
+    @GetMapping(path="/measurements/{id}/percentage")
+    public Measurement getTankFullness(@PathVariable Long id) {
+        Measurement measurement = repository.findById(id).get();
+
+        int distance = measurement.getWaterLevelDistance();
+
+        return measurement;
     }
 }

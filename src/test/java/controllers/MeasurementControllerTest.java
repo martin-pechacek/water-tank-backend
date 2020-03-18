@@ -18,6 +18,7 @@ import org.springframework.test.web.servlet.request.MockMvcRequestBuilders;
 import org.springframework.test.web.servlet.result.MockMvcResultHandlers;
 import org.springframework.test.web.servlet.result.MockMvcResultMatchers;
 import watertank.WaterTankServer;
+import watertank.models.Measurement;
 import watertank.utils.JSONUtil;
 
 import java.util.List;
@@ -166,5 +167,23 @@ public class MeasurementControllerTest {
         List<Object> measurementsList = JSONUtil.parseStringToArray(contentAsString);
 
         Assertions.assertTrue(measurementsList.size() == 1);
+    }
+
+    @Test
+    public void getMeasurement() throws Exception {
+        MvcResult result = this.mockMvc.perform(
+                                        MockMvcRequestBuilders.get("/api/measurements/1/")
+                                                .headers(headers)
+                                ).andDo(MockMvcResultHandlers.print())
+                                        .andExpect(MockMvcResultMatchers.status().isOk())
+                                        .andReturn();
+
+        String content = result.getResponse()
+                                .getContentAsString();
+
+        content.contains("{\"id\"}");
+        content.contains("{\"createdAt\"}");
+        content.contains("{\"waterTankDistance\"}");
+        content.contains("{\"tankFullness\"}");
     }
 }

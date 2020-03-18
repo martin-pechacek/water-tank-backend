@@ -44,6 +44,11 @@ public class Measurement {
         return createdAt;
     }
 
+    public int getTankFullness() {
+        double tankFullness = 100 - (double) getWaterLevelDistance() / (double) Distance.SPILLWAY.getDistance() * 100;
+        return (int) tankFullness;
+    }
+
     @Override
     public String toString() {
         final StringBuilder sb = new StringBuilder("{");
