@@ -1,6 +1,7 @@
 package watertank.dtos.mappers;
 
 import org.mapstruct.AfterMapping;
+import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
@@ -23,5 +24,12 @@ public interface MeasurementMapper {
     default void calculateTankFullness(Measurement measurement, @MappingTarget MeasurementDTO dto) {
         double tankFullness = 100 - (double) measurement.getWaterLevelDistance() / (double) Distance.SPILLWAY.getDistance() * 100;
         dto.setTankFullness((int)Math.round(tankFullness));
+    }
+
+    @AfterMapping
+    default void calculateRealWaterDistance(MeasurementDTO measurementDTO, @MappingTarget Measurement measurement){
+        int measuredWaterLevelDistance = measurementDTO.getWaterLevelDistance();
+
+        measurement.setWaterLevelDistance(measuredWaterLevelDistance - Distance.maxWaterLevel());
     }
 }

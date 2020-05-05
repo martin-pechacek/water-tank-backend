@@ -3,6 +3,7 @@ package watertank.dtos.mappers;
 import org.junit.jupiter.api.BeforeEach;
 import org.junit.jupiter.api.Test;
 import watertank.dtos.MeasurementDTO;
+import watertank.enums.Distance;
 import watertank.models.Measurement;
 
 import java.util.Date;
@@ -28,7 +29,7 @@ class MeasurementMapperTest {
         Measurement measurement = measurementMapper.measurementDtoToMeasurement(measurementDTO);
 
         assertEquals(measurement.getId(), measurementDTO.getId());
-        assertEquals(measurement.getWaterLevelDistance(), measurementDTO.getWaterLevelDistance());
+        assertEquals(measurement.getWaterLevelDistance(), measurementDTO.getWaterLevelDistance() - Distance.maxWaterLevel());
         assertEquals(measurement.getCreatedAt(), measurementDTO.getCreatedAt());
     }
 

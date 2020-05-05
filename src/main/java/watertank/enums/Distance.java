@@ -13,4 +13,8 @@ public enum Distance {
     public int getDistance() {
         return distance;
     }
+
+    public static int maxWaterLevel(){
+        return ULTRASONIC_SENSOR.getDistance() - SPILLWAY.getDistance();
+    }
 }
