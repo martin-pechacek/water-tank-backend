@@ -16,8 +16,10 @@ public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
     private String deviceIds;
 
     @Override
-    protected void configure(final HttpSecurity http) throws Exception {
-        http.addFilterBefore(new AuthenticationFilter(deviceIds),
-                            BasicAuthenticationFilter.class).csrf().disable();
+    protected void configure(HttpSecurity http) throws Exception {
+        http.antMatcher("/api/**")
+                .addFilterBefore(new AuthenticationFilter(deviceIds),
+                                 BasicAuthenticationFilter.class)
+                .csrf().disable();
     }
 }
