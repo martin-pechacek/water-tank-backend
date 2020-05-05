@@ -1,5 +1,7 @@
 package watertank.models;
 
+import lombok.Getter;
+import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 import watertank.enums.Distance;
 
@@ -8,6 +10,8 @@ import javax.validation.constraints.*;
 import java.util.Date;
 
 @Entity
+@Getter
+@Setter
 @Table(name = "measurement_history")
 public class Measurement {
 
@@ -16,38 +20,11 @@ public class Measurement {
     private Long id;
 
     @Column(name = "water_level_distance")
-    @NotNull(message = "waterLevelDistance may not be null")
-    @PositiveOrZero(message = "waterLevelDistance should be positive or 0")
-    @Max(260)
     private Integer waterLevelDistance;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
     private Date createdAt;
-
-    public Measurement() {
-    }
-
-    public Long getId() {
-        return id;
-    }
-
-    public int getWaterLevelDistance() {
-        return waterLevelDistance;
-    }
-
-    public void setWaterLevelDistance(final int waterLevelDistance) {
-        this.waterLevelDistance = waterLevelDistance;
-    }
-
-    public Date getCreatedAt() {
-        return createdAt;
-    }
-
-    public int getTankFullness() {
-        double tankFullness = 100 - (double) getWaterLevelDistance() / (double) Distance.SPILLWAY.getDistance() * 100;
-        return (int) tankFullness;
-    }
 
     @Override
     public String toString() {
