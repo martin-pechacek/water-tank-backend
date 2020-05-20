@@ -8,7 +8,7 @@ __Other parts of solution__
 
 ## Notes
 * For successful api communication client has to contain correct device id in header
-* Dev profile uses HTTP communication and in-memory [H2 database](H2 Database)
+* Dev profile uses HTTP communication and in-memory [H2 database](https://www.h2database.com/)
 * Prod profile uses self-signed certificate and HTTPS only.
 * Certificate is saved in machine's JAVA_HOME/certificate folder
 
