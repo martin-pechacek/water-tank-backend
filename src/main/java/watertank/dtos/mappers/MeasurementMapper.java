@@ -1,15 +1,12 @@
 package watertank.dtos.mappers;
 
 import org.mapstruct.AfterMapping;
-import org.mapstruct.BeforeMapping;
 import org.mapstruct.Mapper;
 import org.mapstruct.MappingTarget;
 import org.mapstruct.factory.Mappers;
 import watertank.dtos.MeasurementDTO;
 import watertank.enums.Distance;
 import watertank.models.Measurement;
-
-import javax.persistence.criteria.CriteriaBuilder;
 
 @Mapper(componentModel = "spring")
 public interface MeasurementMapper {

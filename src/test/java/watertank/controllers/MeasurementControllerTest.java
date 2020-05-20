@@ -10,15 +10,13 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import watertank.dtos.MeasurementDTO;
-import watertank.models.Measurement;
 import watertank.services.MeasurementService;
 
-import java.util.List;
+import java.util.Date;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
 import static org.hamcrest.Matchers.hasSize;
-import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
 import static org.mockito.Mockito.*;
 import static org.springframework.test.web.servlet.request.MockMvcRequestBuilders.get;
@@ -37,13 +35,10 @@ class MeasurementControllerTest {
 
     MockMvc mockMvc;
 
-    private final String BASE_URI = MeasurementController.BASE_URI;
-
     private static HttpHeaders headers;
 
     private static final String DEVICE_ID_HEADER = "Device-ID";
     private static final String CORRECT_DEVICE_ID = "test-device";
-    private static final String WRONG_DEVICE_ID = "bad-device";
 
     @BeforeEach
     void setUp() {
@@ -59,17 +54,17 @@ class MeasurementControllerTest {
     @Test
     void addMeasurement() throws Exception {
         MeasurementDTO measurementDTO = new MeasurementDTO();
-        measurementDTO.setId(1L);
+        measurementDTO.setWaterLevelDistance(24);
 
         MeasurementDTO returnedDTO = new MeasurementDTO();
-        returnedDTO.setId(measurementDTO.getId());
+        returnedDTO.setId(1L);
         returnedDTO.setWaterLevelDistance(13);
         returnedDTO.setTankFullness(95);
 
         when(measurementService.saveMeasurement(any(MeasurementDTO.class))).thenReturn(returnedDTO);
 
         mockMvc.perform(
-                post(BASE_URI)
+                post(MeasurementController.BASE_URI)
                     .contentType(MediaType.APPLICATION_JSON_VALUE)
                     .content(jsonAsString(measurementDTO))
                     .headers(headers))
@@ -80,6 +75,57 @@ class MeasurementControllerTest {
 
         verify(measurementService, times(1)).saveMeasurement(any(MeasurementDTO.class));
     }
+
+    @Test
+    void addMeasurementMissingWaterLevel() throws Exception {
+        MeasurementDTO measurementDTO = new MeasurementDTO();
+
+        mockMvc.perform(post(MeasurementController.BASE_URI)
+                    .contentType(MediaType.APPLICATION_JSON_VALUE)
+                    .content(jsonAsString(measurementDTO))
+                    .headers(headers))
+                .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addMeasurementWaterLevelBelow0() throws Exception {
+        MeasurementDTO measurementDTO = new MeasurementDTO();
+        measurementDTO.setWaterLevelDistance(-1);
+
+        mockMvc.perform(post(MeasurementController.BASE_URI)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(jsonAsString(measurementDTO))
+                .headers(headers))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addMeasurementWaterLevelAbove260() throws Exception {
+        MeasurementDTO measurementDTO = new MeasurementDTO();
+        measurementDTO.setWaterLevelDistance(261);
+
+        mockMvc.perform(post(MeasurementController.BASE_URI)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(jsonAsString(measurementDTO))
+                .headers(headers))
+            .andExpect(status().isBadRequest());
+    }
+
+    @Test
+    void addMesurementWithFilledNullAttributes() throws Exception {
+        MeasurementDTO measurementDTO = new MeasurementDTO();
+        measurementDTO.setId(1L);
+        measurementDTO.setWaterLevelDistance(100);
+        measurementDTO.setTankFullness(50);
+        measurementDTO.setCreatedAt(new Date());
+
+        mockMvc.perform(post(MeasurementController.BASE_URI)
+                .contentType(MediaType.APPLICATION_JSON_VALUE)
+                .content(jsonAsString(measurementDTO))
+                .header("Device-ID", "test-device"))
+            .andExpect(status().isBadRequest());
+    }
+
 
     @Test
     void getAllMeasurements() throws Exception {
@@ -97,7 +143,7 @@ class MeasurementControllerTest {
         when(measurementService.findAllMeasurements()).thenReturn(measurements);
 
         mockMvc.perform(
-                get(BASE_URI)
+                get(MeasurementController.BASE_URI)
                         .headers(headers))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",hasSize(3)));
@@ -115,9 +161,9 @@ class MeasurementControllerTest {
         when(measurementService.findLatestXRecords(1L)).thenReturn(measurements);
 
         mockMvc.perform(
-                get(BASE_URI)
+                get(MeasurementController.BASE_URI)
                         .headers(headers)
-                        .param("numberOfLatestRecords","1"))
+                        .param("last","1"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",hasSize(1)));
 
@@ -134,7 +180,7 @@ class MeasurementControllerTest {
         when(measurementService.findById(anyLong())).thenReturn(measurement);
 
         mockMvc.perform(
-                get(BASE_URI + "/1")
+                get(MeasurementController.BASE_URI + "/1")
                         .headers(headers))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$.id", equalTo(1)))

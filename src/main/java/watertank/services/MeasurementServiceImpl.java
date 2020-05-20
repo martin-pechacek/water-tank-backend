@@ -1,20 +1,15 @@
 package watertank.services;
 
 
-import org.springframework.data.domain.PageRequest;
 import org.springframework.stereotype.Service;
 import watertank.dtos.MeasurementDTO;
 import watertank.dtos.mappers.MeasurementMapper;
 import watertank.models.Measurement;
 import watertank.repositories.MeasurementRepository;
-import watertank.utils.JSONUtil;
+import watertank.exceptions.NotFoundException;
 
-import javax.swing.text.html.Option;
 import java.util.*;
 import java.util.stream.Collectors;
-
-import static java.util.Comparator.comparing;
-import static java.util.Comparator.reverseOrder;
 
 @Service
 public class MeasurementServiceImpl  implements MeasurementService{
@@ -47,7 +42,7 @@ public class MeasurementServiceImpl  implements MeasurementService{
         Optional<Measurement> measurementOpt = measurementRepository.findById(id);
 
         if(!measurementOpt.isPresent())
-            throw new RuntimeException("Measurement with id " + id + " is not found");
+            throw new NotFoundException("Measurement with id " + id + " not found");
 
         return mapper.measurementToMeasurementDto(measurementOpt.get());
     }

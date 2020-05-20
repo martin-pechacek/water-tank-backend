@@ -2,10 +2,6 @@ package watertank.dtos;
 
 import lombok.Getter;
 import lombok.Setter;
-import org.mapstruct.AfterMapping;
-import org.mapstruct.MappingTarget;
-import watertank.enums.Distance;
-import watertank.models.Measurement;
 
 import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
@@ -17,17 +13,17 @@ import java.util.Date;
 @Setter
 public class MeasurementDTO {
 
-    @Null
+    @Null(message = "id must not be sent")
     private Long id;
 
     @NotNull(message = "waterLevelDistance may not be null")
-    @PositiveOrZero(message = "waterLevelDistance should be positive or 0")
-    @Max(260)
+    @PositiveOrZero(message = "waterLevelDistance must be positive or 0")
+    @Max(value = 260, message = "waterLevelDistance must be lower than 260")
     private Integer waterLevelDistance;
 
-    @Null
+    @Null(message = "createdAt must not be sent")
     private Date createdAt;
 
-    @Null
+    @Null(message = "tankFullness must not be sent")
     private Integer tankFullness;
 }

@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.*;
 import watertank.dtos.MeasurementDTO;
 import watertank.services.MeasurementService;
 
+import javax.validation.Valid;
 import java.util.Set;
 
 @RestController
@@ -22,21 +23,21 @@ public class MeasurementController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MeasurementDTO addMeasurement(@RequestBody MeasurementDTO measurementDTO) {
+    public MeasurementDTO addMeasurement(@Valid @RequestBody MeasurementDTO measurementDTO) {
         return measurementService.saveMeasurement(measurementDTO);
     }
 
 
     @GetMapping
-    public Set<MeasurementDTO> getAllMeasurements(@RequestParam(required = false) final Long numberOfLatestRecords) {
-        return numberOfLatestRecords == null
-                ? measurementService.findAllMeasurements()
-                : measurementService.findLatestXRecords(numberOfLatestRecords);
+    public Set<MeasurementDTO> getAllMeasurements(@RequestParam(value = "last", required = false) final Long numberOfLatestRecords) {
+        return numberOfLatestRecords != null
+                ? measurementService.findLatestXRecords(numberOfLatestRecords)
+                : measurementService.findAllMeasurements();
     }
 
 
     @GetMapping("/{id}")
-    public MeasurementDTO getMeasurementById(@PathVariable String id) {
-        return measurementService.findById(Long.valueOf(id));
+    public MeasurementDTO getMeasurementById(@PathVariable Long id) {
+        return measurementService.findById(id);
     }
 }
