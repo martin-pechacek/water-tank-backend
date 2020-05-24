@@ -31,8 +31,7 @@ public class MeasurementServiceImpl  implements MeasurementService{
 
     @Override
     public List<MeasurementDTO> findAllMeasurements() {
-        List<Measurement> measurements = measurementRepository.findAll(
-                Sort.by(Sort.Direction.ASC, "id"));
+        List<Measurement> measurements = measurementRepository.findAll();
 
         return measurements.stream()
                 .map(mapper::measurementToMeasurementDto)
