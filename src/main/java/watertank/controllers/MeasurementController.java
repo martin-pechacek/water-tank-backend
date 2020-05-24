@@ -6,6 +6,7 @@ import watertank.dtos.MeasurementDTO;
 import watertank.services.MeasurementService;
 
 import javax.validation.Valid;
+import java.util.List;
 import java.util.Set;
 
 @RestController
@@ -29,7 +30,7 @@ public class MeasurementController {
 
 
     @GetMapping
-    public Set<MeasurementDTO> getAllMeasurements(@RequestParam(value = "last", required = false) final Long numberOfLatestRecords) {
+    public List<MeasurementDTO> getAllMeasurements(@RequestParam(value = "last", required = false) final Long numberOfLatestRecords) {
         return numberOfLatestRecords != null
                 ? measurementService.findLatestXRecords(numberOfLatestRecords)
                 : measurementService.findAllMeasurements();

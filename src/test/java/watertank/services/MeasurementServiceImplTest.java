@@ -75,7 +75,7 @@ class MeasurementServiceImplTest {
 
         when(repository.findAll()).thenReturn(measurements);
 
-        Set<MeasurementDTO> returnedMeasurements = measurementService.findAllMeasurements();
+        List<MeasurementDTO> returnedMeasurements = measurementService.findAllMeasurements();
 
         assertEquals(returnedMeasurements.size(),3);
         verify(repository, times(1)).findAll();
@@ -116,7 +116,7 @@ class MeasurementServiceImplTest {
 
         when(repository.findAll()).thenReturn(measurements);
 
-        Set<MeasurementDTO> returnedMeasurements = measurementService.findLatestXRecords(2L);
+        List<MeasurementDTO> returnedMeasurements = measurementService.findLatestXRecords(2L);
 
         assertEquals(2, returnedMeasurements.size());
     }

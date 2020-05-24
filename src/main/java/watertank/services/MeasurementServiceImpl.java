@@ -1,6 +1,7 @@
 package watertank.services;
 
 
+import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import watertank.dtos.MeasurementDTO;
 import watertank.dtos.mappers.MeasurementMapper;
@@ -29,12 +30,14 @@ public class MeasurementServiceImpl  implements MeasurementService{
     }
 
     @Override
-    public Set<MeasurementDTO> findAllMeasurements() {
-        List<Measurement> measurements = measurementRepository.findAll();
+    public List<MeasurementDTO> findAllMeasurements() {
+        List<Measurement> measurements = measurementRepository.findAll(
+                Sort.by(Sort.Direction.ASC, "id"));
 
         return measurements.stream()
                 .map(mapper::measurementToMeasurementDto)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
+
     }
 
     @Override
@@ -48,7 +51,7 @@ public class MeasurementServiceImpl  implements MeasurementService{
     }
 
     @Override
-    public Set<MeasurementDTO> findLatestXRecords(Long latestXRecords) {
+    public List<MeasurementDTO> findLatestXRecords(Long latestXRecords) {
         ArrayList<Measurement> measurements = new ArrayList<>(measurementRepository.findAll());
 
         Collections.reverse(measurements);
@@ -56,6 +59,6 @@ public class MeasurementServiceImpl  implements MeasurementService{
         return measurements.stream()
                 .limit(latestXRecords)
                 .map(mapper::measurementToMeasurementDto)
-                .collect(Collectors.toSet());
+                .collect(Collectors.toList());
     }
 }
