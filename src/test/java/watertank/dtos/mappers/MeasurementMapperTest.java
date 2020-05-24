@@ -45,6 +45,6 @@ class MeasurementMapperTest {
         assertEquals(measurement.getId(), measurementDTO.getId());
         assertEquals(measurement.getWaterLevelDistance(), measurementDTO.getWaterLevelDistance());
         assertEquals(measurement.getCreatedAt(), measurementDTO.getCreatedAt());
-        assertEquals(95, measurementDTO.getTankFullness());
+        assertEquals(94, measurementDTO.getTankFullness());
     }
 }
