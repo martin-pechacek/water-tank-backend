@@ -2,7 +2,7 @@ package watertank.enums;
 
 public enum Distance {
     ULTRASONIC_SENSOR(252),
-    SPILLWAY(241);
+    SPILLWAY(228);
 
     private int distance;
 

@@ -20,6 +20,7 @@ public interface MeasurementMapper {
     @AfterMapping
     default void calculateTankFullness(Measurement measurement, @MappingTarget MeasurementDTO dto) {
         double tankFullness = 100 - (double) measurement.getWaterLevelDistance() / (double) Distance.SPILLWAY.getDistance() * 100;
+        tankFullness = tankFullness > 100 ? 100 : tankFullness;
         dto.setTankFullness((int)Math.round(tankFullness));
     }
 
