@@ -13,6 +13,7 @@ import watertank.dtos.MeasurementDTO;
 import watertank.services.MeasurementService;
 
 import java.util.Date;
+import java.util.List;
 import java.util.Set;
 
 import static org.hamcrest.Matchers.equalTo;
@@ -138,7 +139,7 @@ class MeasurementControllerTest {
         MeasurementDTO measurement3 = new MeasurementDTO();
         measurement3.setId(3L);
 
-        Set<MeasurementDTO> measurements = Set.of(measurement, measurement2, measurement3);
+        List<MeasurementDTO> measurements = List.of(measurement, measurement2, measurement3);
 
         when(measurementService.findAllMeasurements()).thenReturn(measurements);
 
@@ -156,7 +157,7 @@ class MeasurementControllerTest {
         MeasurementDTO measurement = new MeasurementDTO();
         measurement.setId(1L);
 
-        Set<MeasurementDTO> measurements = Set.of(measurement);
+        List<MeasurementDTO> measurements = List.of(measurement);
 
         when(measurementService.findLatestXRecords(1L)).thenReturn(measurements);
 
