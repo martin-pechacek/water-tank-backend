@@ -119,6 +119,5 @@ class MeasurementServiceImplTest {
         Set<MeasurementDTO> returnedMeasurements = measurementService.findLatestXRecords(2L);
 
         assertEquals(2, returnedMeasurements.size());
-        assertEquals(3, returnedMeasurements.iterator().next().getId());
     }
 }
