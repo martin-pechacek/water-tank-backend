@@ -196,7 +196,7 @@ class MeasurementControllerTest {
         mockMvc.perform(
                 get(MeasurementController.BASE_URI)
                         .headers(headers)
-                        .param("daysMedian","true"))
+                        .param("dailyMedians","true"))
                 .andExpect(status().isOk())
                 .andExpect(jsonPath("$",hasSize(2)));
 
