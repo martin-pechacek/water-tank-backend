@@ -10,8 +10,11 @@ import org.springframework.http.MediaType;
 import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import watertank.dtos.MeasurementDTO;
+import watertank.models.Measurement;
 import watertank.services.MeasurementService;
 
+import java.time.LocalDate;
+import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.Set;
@@ -169,6 +172,35 @@ class MeasurementControllerTest {
                 .andExpect(jsonPath("$",hasSize(1)));
 
         verify(measurementService, times(1)).findLatestXRecords(anyLong());
+    }
+
+    @Test
+    void getDailyMedians() throws Exception {
+        Date yesterday = Date.from(LocalDate.now().minusDays(1).atStartOfDay().toInstant(ZoneOffset.UTC));
+        Date today = Date.from(LocalDate.now().atStartOfDay().toInstant(ZoneOffset.UTC));
+
+        MeasurementDTO measurement1 = new MeasurementDTO();
+        measurement1.setId(1L);
+        measurement1.setCreatedAt(yesterday);
+        measurement1.setWaterLevelDistance(100);
+
+        MeasurementDTO measurement2 = new MeasurementDTO();
+        measurement2.setId(2L);
+        measurement2.setCreatedAt(today);
+        measurement2.setWaterLevelDistance(20);
+
+        List<MeasurementDTO> measurements = List.of(measurement1, measurement2);
+
+        when(measurementService.getDailyMedians()).thenReturn(measurements);
+
+        mockMvc.perform(
+                get(MeasurementController.BASE_URI)
+                        .headers(headers)
+                        .param("daysMedian","true"))
+                .andExpect(status().isOk())
+                .andExpect(jsonPath("$",hasSize(2)));
+
+        verify(measurementService, times(1)).getDailyMedians();
     }
 
     @Test

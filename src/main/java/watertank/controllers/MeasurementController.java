@@ -30,12 +30,16 @@ public class MeasurementController {
 
 
     @GetMapping
-    public List<MeasurementDTO> getAllMeasurements(@RequestParam(value = "last", required = false) final Long numberOfLatestRecords) {
-        return numberOfLatestRecords != null
-                ? measurementService.findLatestXRecords(numberOfLatestRecords)
-                : measurementService.findAllMeasurements();
+    public List<MeasurementDTO> getAllMeasurements(@RequestParam(value = "last", required = false) final Long numberOfLatestRecords,
+                                                   @RequestParam(value = "dailyMedians", required = false) final Boolean daysMedian) {
+        if (daysMedian == null || !daysMedian) {
+            return numberOfLatestRecords != null
+                    ? measurementService.findLatestXRecords(numberOfLatestRecords)
+                    : measurementService.findAllMeasurements();
+        } else {
+            return measurementService.getDailyMedians();
+        }
     }
-
 
     @GetMapping("/{id}")
     public MeasurementDTO getMeasurementById(@PathVariable Long id) {
