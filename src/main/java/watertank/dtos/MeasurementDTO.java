@@ -7,6 +7,7 @@ import javax.validation.constraints.Max;
 import javax.validation.constraints.NotNull;
 import javax.validation.constraints.Null;
 import javax.validation.constraints.PositiveOrZero;
+import java.util.Comparator;
 import java.util.Date;
 
 @Getter
@@ -26,4 +27,10 @@ public class MeasurementDTO {
 
     @Null(message = "tankFullness must not be sent")
     private Integer tankFullness;
+
+    public static Comparator<MeasurementDTO> compareByTankFulness = new Comparator<MeasurementDTO>() {
+        public int compare(MeasurementDTO m1, MeasurementDTO m2) {
+            return m1.getTankFullness().compareTo(m2.getTankFullness());
+        }
+    };
 }
