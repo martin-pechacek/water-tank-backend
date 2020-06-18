@@ -31,7 +31,7 @@ public class MeasurementController {
 
     @GetMapping
     public List<MeasurementDTO> getAllMeasurements(@RequestParam(value = "last", required = false) final Long numberOfLatestRecords,
-                                                   @RequestParam(value = "daysMedian", required = false) final Boolean daysMedian) {
+                                                   @RequestParam(value = "dailyMedians", required = false) final Boolean daysMedian) {
         if (daysMedian == null || !daysMedian) {
             return numberOfLatestRecords != null
                     ? measurementService.findLatestXRecords(numberOfLatestRecords)
