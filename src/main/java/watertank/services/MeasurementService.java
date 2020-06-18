@@ -13,4 +13,6 @@ public interface MeasurementService {
     MeasurementDTO findById(Long id);
 
     List<MeasurementDTO> findLatestXRecords(Long latestXRecords);
+
+    List<MeasurementDTO> getDailyMedians();
 }

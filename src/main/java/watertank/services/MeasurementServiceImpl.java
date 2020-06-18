@@ -9,11 +9,14 @@ import watertank.models.Measurement;
 import watertank.repositories.MeasurementRepository;
 import watertank.exceptions.NotFoundException;
 
+import java.time.LocalDate;
+import java.time.ZoneId;
+import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
 
 @Service
-public class MeasurementServiceImpl  implements MeasurementService{
+public class MeasurementServiceImpl  implements MeasurementService {
 
     private final MeasurementRepository measurementRepository;
     private final MeasurementMapper mapper;
@@ -59,5 +62,37 @@ public class MeasurementServiceImpl  implements MeasurementService{
                 .limit(latestXRecords)
                 .map(mapper::measurementToMeasurementDto)
                 .collect(Collectors.toList());
+    }
+
+    @Override
+    public List<MeasurementDTO> getDailyMedians() {
+        List<MeasurementDTO> subMeasurementList = new ArrayList<>();
+        List<MeasurementDTO> dailyMedians = new ArrayList<>();
+
+        List<MeasurementDTO> measurements = new ArrayList<>(measurementRepository.findAll())
+                .stream()
+                .map(mapper::measurementToMeasurementDto)
+                .collect(Collectors.toList());
+
+        measurements.forEach(measurement -> {
+            LocalDate measurementDate = measurement.getCreatedAt().toInstant().atOffset(ZoneOffset.UTC).toLocalDate();
+            LocalDate firstDateInSubset = subMeasurementList.size() > 0
+                    ? subMeasurementList.get(0).getCreatedAt().toInstant().atOffset(ZoneOffset.UTC).toLocalDate()
+                    : measurementDate; // first measurement in day
+
+            // Have all measurements from one day
+            if(measurementDate.compareTo(firstDateInSubset) != 0) {
+                Collections.sort(subMeasurementList, MeasurementDTO.compareByTankFulness);
+
+                // approximately median - exact median is not necessary
+                dailyMedians.add(subMeasurementList.get(subMeasurementList.size()/2));
+
+                subMeasurementList.clear();
+            }
+
+            subMeasurementList.add(measurement);
+        });
+
+        return dailyMedians;
     }
 }
