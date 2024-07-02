@@ -1,16 +1,14 @@
 package watertank.services;
 
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import watertank.dtos.MeasurementDTO;
 import watertank.dtos.mappers.MeasurementMapper;
 import watertank.models.Measurement;
 import watertank.repositories.MeasurementRepository;
-import watertank.exceptions.NotFoundException;
+import watertank.exceptions.MeasurementException;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
 import java.util.stream.Collectors;
@@ -38,18 +36,15 @@ public class MeasurementServiceImpl  implements MeasurementService {
 
         return measurements.stream()
                 .map(mapper::measurementToMeasurementDto)
-                .collect(Collectors.toList());
+                .toList();
 
     }
 
     @Override
     public MeasurementDTO findById(Long id) {
-        Optional<Measurement> measurementOpt = measurementRepository.findById(id);
-
-        if(!measurementOpt.isPresent())
-            throw new NotFoundException("Measurement with id " + id + " not found");
-
-        return mapper.measurementToMeasurementDto(measurementOpt.get());
+        return measurementRepository.findById(id)
+                .map(mapper::measurementToMeasurementDto)
+                .orElseThrow(() ->  MeasurementException.NOT_FOUND);
     }
 
     @Override
@@ -61,7 +56,7 @@ public class MeasurementServiceImpl  implements MeasurementService {
         return measurements.stream()
                 .limit(latestXRecords)
                 .map(mapper::measurementToMeasurementDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -72,11 +67,11 @@ public class MeasurementServiceImpl  implements MeasurementService {
         List<MeasurementDTO> measurements = new ArrayList<>(measurementRepository.findAll())
                 .stream()
                 .map(mapper::measurementToMeasurementDto)
-                .collect(Collectors.toList());
+                .toList();
 
         measurements.forEach(measurement -> {
             LocalDate measurementDate = measurement.getCreatedAt().toInstant().atOffset(ZoneOffset.UTC).toLocalDate();
-            LocalDate firstDateInSubset = subMeasurementList.size() > 0
+            LocalDate firstDateInSubset = !subMeasurementList.isEmpty()
                     ? subMeasurementList.get(0).getCreatedAt().toInstant().atOffset(ZoneOffset.UTC).toLocalDate()
                     : measurementDate; // first measurement in day
 

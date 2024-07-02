@@ -8,8 +8,9 @@ import org.springframework.web.bind.annotation.ResponseStatus;
 import org.springframework.web.bind.annotation.RestControllerAdvice;
 import org.springframework.web.method.annotation.MethodArgumentTypeMismatchException;
 import watertank.dtos.ErrorDTO;
-import watertank.exceptions.NotFoundException;
+import watertank.exceptions.MeasurementException;
 
+import java.util.HashSet;
 import java.util.Set;
 import java.util.stream.Collectors;
 
@@ -17,20 +18,18 @@ import java.util.stream.Collectors;
 public class ExceptionHandlerController {
 
     @ResponseStatus(HttpStatus.NOT_FOUND)
-    @ExceptionHandler({NotFoundException.class})
+    @ExceptionHandler({MeasurementException.class})
     protected ErrorDTO notFoundException(Exception exception) {
         return new ErrorDTO(
                 HttpStatus.NOT_FOUND.value(),
                 HttpStatus.NOT_FOUND.getReasonPhrase(),
-                Set.of(new ObjectError(NotFoundException.class.getName(), exception.getMessage())));
+                Set.of(new ObjectError(MeasurementException.class.getName(), exception.getMessage())));
     }
 
     @ResponseStatus(HttpStatus.BAD_REQUEST)
     @ExceptionHandler({MethodArgumentNotValidException.class})
     protected ErrorDTO handleMethodArgumentNotValid(MethodArgumentNotValidException ex) {
-        Set<ObjectError> errors = ex.getBindingResult().getAllErrors()
-                .stream()
-                .collect(Collectors.toSet());
+        Set<ObjectError> errors = new HashSet<>(ex.getBindingResult().getAllErrors());
 
         return new ErrorDTO(
                 HttpStatus.BAD_REQUEST.value(),

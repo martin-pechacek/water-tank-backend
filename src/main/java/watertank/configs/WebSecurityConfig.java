@@ -1,25 +1,24 @@
 package watertank.configs;
 
 import org.springframework.beans.factory.annotation.Value;
+import org.springframework.context.annotation.Bean;
 import org.springframework.context.annotation.Configuration;
 import org.springframework.security.config.annotation.web.builders.HttpSecurity;
 import org.springframework.security.config.annotation.web.configuration.EnableWebSecurity;
-import org.springframework.security.config.annotation.web.configuration.WebSecurityConfigurerAdapter;
-import org.springframework.security.web.authentication.www.BasicAuthenticationFilter;
-import watertank.filters.AuthenticationFilter;
+import org.springframework.security.web.SecurityFilterChain;
 
 @EnableWebSecurity
 @Configuration
-public class WebSecurityConfig extends WebSecurityConfigurerAdapter {
+public class WebSecurityConfig {
 
     @Value("${deviceIds.valid}")
     private String deviceIds;
 
-    @Override
-    protected void configure(HttpSecurity http) throws Exception {
-        http.antMatcher("/api/**")
-                .addFilterBefore(new AuthenticationFilter(deviceIds),
-                                 BasicAuthenticationFilter.class)
-                .csrf().disable();
+    @Bean
+    protected SecurityFilterChain filterChain(HttpSecurity http) throws Exception {
+        return http
+                .requiresChannel(channel -> channel.anyRequest().requiresSecure())
+                .securityMatcher("/api/**")
+                .build();
     }
 }

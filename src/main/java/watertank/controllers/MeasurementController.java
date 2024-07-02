@@ -1,13 +1,12 @@
 package watertank.controllers;
 
 import org.springframework.http.HttpStatus;
+import org.springframework.validation.annotation.Validated;
 import org.springframework.web.bind.annotation.*;
 import watertank.dtos.MeasurementDTO;
 import watertank.services.MeasurementService;
 
-import javax.validation.Valid;
 import java.util.List;
-import java.util.Set;
 
 @RestController
 @RequestMapping(MeasurementController.BASE_URI)
@@ -24,7 +23,7 @@ public class MeasurementController {
 
     @PostMapping
     @ResponseStatus(HttpStatus.CREATED)
-    public MeasurementDTO addMeasurement(@Valid @RequestBody MeasurementDTO measurementDTO) {
+    public MeasurementDTO addMeasurement(@Validated @RequestBody MeasurementDTO measurementDTO) {
         return measurementService.saveMeasurement(measurementDTO);
     }
 
