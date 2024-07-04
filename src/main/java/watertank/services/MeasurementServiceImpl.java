@@ -4,6 +4,7 @@ package watertank.services;
 import org.springframework.stereotype.Service;
 import watertank.dtos.MeasurementDTO;
 import watertank.dtos.mappers.MeasurementMapper;
+import watertank.enums.Distance;
 import watertank.models.Measurement;
 import watertank.repositories.MeasurementRepository;
 import watertank.exceptions.MeasurementException;
@@ -11,7 +12,6 @@ import watertank.exceptions.MeasurementException;
 import java.time.LocalDate;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class MeasurementServiceImpl  implements MeasurementService {
@@ -25,9 +25,11 @@ public class MeasurementServiceImpl  implements MeasurementService {
     }
 
     @Override
-    public MeasurementDTO saveMeasurement(MeasurementDTO measurementDTO) {
-        Measurement measurement = measurementRepository.save(mapper.measurementDtoToMeasurement(measurementDTO));
-        return mapper.measurementToMeasurementDto(measurement);
+    public MeasurementDTO saveMeasurement(final MeasurementDTO measurementDTO, final String deviceId) {
+        measurementDTO.setTankFullness(calculateTankFullness(measurementDTO.getWaterLevelDistance()));
+        Measurement measurement = mapper.measurementDtoToMeasurement(measurementDTO);
+        measurement.setDevice(deviceId);
+        return mapper.measurementToMeasurementDto(measurementRepository.save(measurement));
     }
 
     @Override
@@ -48,13 +50,13 @@ public class MeasurementServiceImpl  implements MeasurementService {
     }
 
     @Override
-    public List<MeasurementDTO> findLatestXRecords(Long latestXRecords) {
+    public List<MeasurementDTO> findLatestRecords(Long count) {
         ArrayList<Measurement> measurements = new ArrayList<>(measurementRepository.findAll());
 
         Collections.reverse(measurements);
 
         return measurements.stream()
-                .limit(latestXRecords)
+                .limit(count)
                 .map(mapper::measurementToMeasurementDto)
                 .toList();
     }
@@ -89,5 +91,17 @@ public class MeasurementServiceImpl  implements MeasurementService {
         });
 
         return dailyMedians;
+    }
+
+    private Integer calculateTankFullness(Integer waterLevelDistance) {
+        double tankFullness = 100 - (double)calculateWaterDepth(waterLevelDistance) / (double) Distance.SPILLWAY.getDistance() * 100;
+        tankFullness = tankFullness > 100 ? 100 : tankFullness;
+        return Math.toIntExact(Math.round(tankFullness));
+    }
+
+    // Since we get the distance from the sensor to the water, we have to convert it
+    // to the distance from the bottom of the tank to the water surface.
+    private Integer calculateWaterDepth(Integer waterLevelDistance){
+        return waterLevelDistance - Distance.maxWaterLevel();
     }
 }

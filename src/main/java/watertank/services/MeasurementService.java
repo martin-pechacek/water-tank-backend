@@ -3,16 +3,15 @@ package watertank.services;
 import watertank.dtos.MeasurementDTO;
 
 import java.util.List;
-import java.util.Set;
 
 public interface MeasurementService {
-    MeasurementDTO saveMeasurement(MeasurementDTO measurementDTO);
+    MeasurementDTO saveMeasurement(MeasurementDTO measurementDTO, String deviceId);
 
     List<MeasurementDTO> findAllMeasurements();
 
     MeasurementDTO findById(Long id);
 
-    List<MeasurementDTO> findLatestXRecords(Long latestXRecords);
+    List<MeasurementDTO> findLatestRecords(Long latestXRecords);
 
     List<MeasurementDTO> getDailyMedians();
 }

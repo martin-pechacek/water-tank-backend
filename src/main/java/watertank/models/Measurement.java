@@ -1,10 +1,15 @@
 package watertank.models;
 
+import jakarta.persistence.Column;
+import jakarta.persistence.Entity;
+import jakarta.persistence.GeneratedValue;
+import jakarta.persistence.GenerationType;
+import jakarta.persistence.Id;
+import jakarta.persistence.Table;
 import lombok.Getter;
 import lombok.Setter;
 import org.hibernate.annotations.CreationTimestamp;
 
-import javax.persistence.*;
 import java.util.Date;
 
 @Entity
@@ -14,11 +19,14 @@ import java.util.Date;
 public class Measurement {
 
     @Id
-    @GeneratedValue(strategy=GenerationType.IDENTITY)
+    @GeneratedValue(strategy = GenerationType.IDENTITY)
     private Long id;
 
-    @Column(name = "water_level_distance")
-    private Integer waterLevelDistance;
+    @Column(name = "tank_fullness")
+    private Integer tankFullness;
+
+    @Column(name = "device")
+    private String device;
 
     @Column(name = "created_at", updatable = false)
     @CreationTimestamp
@@ -26,9 +34,6 @@ public class Measurement {
 
     @Override
     public String toString() {
-        final StringBuilder sb = new StringBuilder("{");
-        sb.append("waterLevelDistance=").append(waterLevelDistance);
-        sb.append('}');
-        return sb.toString();
+        return "{" + "tankFullness=" + tankFullness + '}';
     }
 }
