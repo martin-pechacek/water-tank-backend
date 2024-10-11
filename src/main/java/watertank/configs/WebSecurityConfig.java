@@ -40,8 +40,8 @@ public class WebSecurityConfig {
 
     @Bean
     public InMemoryUserDetailsManager users() {
-        UserDetails user = User.withUsername("user")
-                .password("$2a$10$unlFClhsB0I/0fuqN.QluOxJrMB3RrTYyfPriYXsRRQFbsn0DaQ.a")
+        UserDetails user = User.withUsername("USERNAME")
+                .password("PASSWORD")
                 .build();
         return new InMemoryUserDetailsManager(user);
     }

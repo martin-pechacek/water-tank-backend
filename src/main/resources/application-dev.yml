@@ -1,0 +1,20 @@
+spring:
+    cloud:
+        vault:
+            enabled: false
+    datasource:
+        password: WaterTankUser123!
+        url: jdbc:postgresql://localhost:5432/water_tank
+        username: watertankuser
+    jpa:
+        hibernate:
+            ddl-auto: update
+            show-sql: true
+        properties:
+            javax:
+                persistence:
+                    schema-generation:
+                        create-source: metadata
+                        scripts:
+                            action: create
+                            create-target: create.sql
