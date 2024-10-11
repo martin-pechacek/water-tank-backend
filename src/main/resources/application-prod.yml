@@ -1,0 +1,20 @@
+spring:
+  cloud:
+    vault:
+      enabled: false
+  datasource:
+    password: DB_USER_PASSWORD
+    url: JDBC_CONNECTION_STRING
+    username: DB_USER
+  jpa:
+    properties:
+      hibernate:
+        boot:
+          allow_jdbc_metadata_access: false
+server:
+  ssl:
+    key-store: classpath:KEYSTORE
+    key-store-password: KEYSTORE_PASSWORD
+    key-store-type: pkcs12
+    key-alias: water_tank
+  port: 8443

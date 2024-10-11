@@ -1,19 +1,17 @@
 package watertank.services;
 
 
-import org.springframework.data.domain.Sort;
 import org.springframework.stereotype.Service;
 import watertank.dtos.MeasurementDTO;
 import watertank.dtos.mappers.MeasurementMapper;
+import watertank.enums.Distance;
 import watertank.models.Measurement;
 import watertank.repositories.MeasurementRepository;
-import watertank.exceptions.NotFoundException;
+import watertank.exceptions.MeasurementException;
 
 import java.time.LocalDate;
-import java.time.ZoneId;
 import java.time.ZoneOffset;
 import java.util.*;
-import java.util.stream.Collectors;
 
 @Service
 public class MeasurementServiceImpl  implements MeasurementService {
@@ -27,9 +25,11 @@ public class MeasurementServiceImpl  implements MeasurementService {
     }
 
     @Override
-    public MeasurementDTO saveMeasurement(MeasurementDTO measurementDTO) {
-        Measurement measurement = measurementRepository.save(mapper.measurementDtoToMeasurement(measurementDTO));
-        return mapper.measurementToMeasurementDto(measurement);
+    public MeasurementDTO saveMeasurement(final MeasurementDTO measurementDTO, final String deviceId) {
+        measurementDTO.setTankFullness(calculateTankFullness(measurementDTO.getWaterLevelDistance()));
+        Measurement measurement = mapper.measurementDtoToMeasurement(measurementDTO);
+        measurement.setDevice(deviceId);
+        return mapper.measurementToMeasurementDto(measurementRepository.save(measurement));
     }
 
     @Override
@@ -38,30 +38,27 @@ public class MeasurementServiceImpl  implements MeasurementService {
 
         return measurements.stream()
                 .map(mapper::measurementToMeasurementDto)
-                .collect(Collectors.toList());
+                .toList();
 
     }
 
     @Override
     public MeasurementDTO findById(Long id) {
-        Optional<Measurement> measurementOpt = measurementRepository.findById(id);
-
-        if(!measurementOpt.isPresent())
-            throw new NotFoundException("Measurement with id " + id + " not found");
-
-        return mapper.measurementToMeasurementDto(measurementOpt.get());
+        return measurementRepository.findById(id)
+                .map(mapper::measurementToMeasurementDto)
+                .orElseThrow(() ->  MeasurementException.NOT_FOUND);
     }
 
     @Override
-    public List<MeasurementDTO> findLatestXRecords(Long latestXRecords) {
+    public List<MeasurementDTO> findLatestRecords(Long count) {
         ArrayList<Measurement> measurements = new ArrayList<>(measurementRepository.findAll());
 
         Collections.reverse(measurements);
 
         return measurements.stream()
-                .limit(latestXRecords)
+                .limit(count)
                 .map(mapper::measurementToMeasurementDto)
-                .collect(Collectors.toList());
+                .toList();
     }
 
     @Override
@@ -72,11 +69,11 @@ public class MeasurementServiceImpl  implements MeasurementService {
         List<MeasurementDTO> measurements = new ArrayList<>(measurementRepository.findAll())
                 .stream()
                 .map(mapper::measurementToMeasurementDto)
-                .collect(Collectors.toList());
+                .toList();
 
         measurements.forEach(measurement -> {
             LocalDate measurementDate = measurement.getCreatedAt().toInstant().atOffset(ZoneOffset.UTC).toLocalDate();
-            LocalDate firstDateInSubset = subMeasurementList.size() > 0
+            LocalDate firstDateInSubset = !subMeasurementList.isEmpty()
                     ? subMeasurementList.get(0).getCreatedAt().toInstant().atOffset(ZoneOffset.UTC).toLocalDate()
                     : measurementDate; // first measurement in day
 
@@ -94,5 +91,17 @@ public class MeasurementServiceImpl  implements MeasurementService {
         });
 
         return dailyMedians;
+    }
+
+    private Integer calculateTankFullness(Integer waterLevelDistance) {
+        double tankFullness = 100 - (double)calculateWaterDepth(waterLevelDistance) / (double) Distance.SPILLWAY.getDistance() * 100;
+        tankFullness = tankFullness > 100 ? 100 : tankFullness;
+        return Math.toIntExact(Math.round(tankFullness));
+    }
+
+    // Since we get the distance from the sensor to the water, we have to convert it
+    // to the distance from the bottom of the tank to the water surface.
+    private Integer calculateWaterDepth(Integer waterLevelDistance){
+        return waterLevelDistance - Distance.maxWaterLevel();
     }
 }

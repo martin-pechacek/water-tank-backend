@@ -10,7 +10,7 @@ import org.springframework.test.web.servlet.MockMvc;
 import org.springframework.test.web.servlet.setup.MockMvcBuilders;
 import watertank.dtos.MeasurementDTO;
 import watertank.services.MeasurementService;
-import watertank.exceptions.NotFoundException;
+import watertank.exceptions.MeasurementException;
 
 import java.util.Date;
 
@@ -44,7 +44,7 @@ class ExceptionHandlerControllerTest {
     void notFoundException() throws Exception {
         Long id = 1L;
 
-        when(measurementService.findById(id)).thenThrow(NotFoundException.class);
+        when(measurementService.findById(id)).thenThrow(MeasurementException.class);
 
         mockMvc.perform(get(MeasurementController.BASE_URI + "/" + id)
                         .header("Device-ID", "test-device"))

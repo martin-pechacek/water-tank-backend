@@ -1,0 +1,4 @@
+.idea/
+docker/data/
+target/
+/src/main/resources/water_tank.p12

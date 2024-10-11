@@ -14,7 +14,6 @@ import java.time.ZoneOffset;
 import java.util.Date;
 import java.util.List;
 import java.util.Optional;
-import java.util.Set;
 
 import static org.junit.jupiter.api.Assertions.*;
 import static org.mockito.ArgumentMatchers.any;
@@ -40,19 +39,22 @@ class MeasurementServiceImplTest {
 
     @Test
     void saveMeasurement() {
+        final String deviceId = "device123";
+
         MeasurementDTO measurementDTO = new MeasurementDTO();
         measurementDTO.setWaterLevelDistance(123);
 
         Measurement measurement = new Measurement();
         measurement.setId(1L);
-        measurement.setWaterLevelDistance(measurementDTO.getWaterLevelDistance());
         measurement.setCreatedAt(new Date());
+        measurement.setTankFullness(54);
+        measurement.setDevice(deviceId);
 
         when(repository.save(any(Measurement.class))).thenReturn(measurement);
 
-        MeasurementDTO returnedDTO = measurementService.saveMeasurement(measurementDTO);
+        MeasurementDTO returnedDTO = measurementService.saveMeasurement(measurementDTO, deviceId);
 
-        assertEquals(returnedDTO.getWaterLevelDistance(), measurementDTO.getWaterLevelDistance());
+        assertEquals(returnedDTO.getTankFullness(), measurement.getTankFullness());
         assertNotNull(returnedDTO.getId());
         assertNotNull(returnedDTO.getCreatedAt());
         assertNotNull(returnedDTO.getTankFullness());
@@ -63,15 +65,15 @@ class MeasurementServiceImplTest {
     void findAllMeasurements() {
         Measurement measurement1 = new Measurement();
         measurement1.setId(1L);
-        measurement1.setWaterLevelDistance(20);
+        measurement1.setTankFullness(20);
 
         Measurement measurement2 = new Measurement();
         measurement2.setId(1L);
-        measurement2.setWaterLevelDistance(20);
+        measurement2.setTankFullness(20);
 
         Measurement measurement3 = new Measurement();
         measurement3.setId(1L);
-        measurement3.setWaterLevelDistance(20);
+        measurement3.setTankFullness(20);
 
         List<Measurement> measurements = List.of(measurement1, measurement2, measurement3);
 
@@ -87,38 +89,38 @@ class MeasurementServiceImplTest {
     void findById() {
         Measurement measurement = new Measurement();
         measurement.setId(1L);
-        measurement.setWaterLevelDistance(50);
+        measurement.setTankFullness(50);
 
         when(repository.findById(anyLong())).thenReturn(Optional.of(measurement));
 
         MeasurementDTO returnedDTO = measurementService.findById(1L);
 
         assertEquals(returnedDTO.getId(), measurement.getId());
-        assertEquals(returnedDTO.getWaterLevelDistance(), measurement.getWaterLevelDistance());
+        assertEquals(returnedDTO.getTankFullness(), measurement.getTankFullness());
         assertNotNull(returnedDTO.getTankFullness());
 
         verify(repository, times(1)).findById(anyLong());
     }
 
     @Test
-    void findLatestXRecords() {
+    void findLatestRecords() {
         Measurement measurement1 = new Measurement();
         measurement1.setId(1L);
-        measurement1.setWaterLevelDistance(20);
+        measurement1.setTankFullness(20);
 
         Measurement measurement2 = new Measurement();
         measurement2.setId(2L);
-        measurement2.setWaterLevelDistance(30);
+        measurement2.setTankFullness(30);
 
         Measurement measurement3 = new Measurement();
         measurement3.setId(3L);
-        measurement3.setWaterLevelDistance(40);
+        measurement3.setTankFullness(40);
 
         List<Measurement> measurements = List.of(measurement1, measurement2, measurement3);
 
         when(repository.findAll()).thenReturn(measurements);
 
-        List<MeasurementDTO> returnedMeasurements = measurementService.findLatestXRecords(2L);
+        List<MeasurementDTO> returnedMeasurements = measurementService.findLatestRecords(2L);
 
         assertEquals(2, returnedMeasurements.size());
     }
@@ -132,47 +134,47 @@ class MeasurementServiceImplTest {
         Measurement measurement1 = new Measurement();
         measurement1.setId(1L);
         measurement1.setCreatedAt(dayBeforeYesterday);
-        measurement1.setWaterLevelDistance(20);
+        measurement1.setTankFullness(20);
 
         Measurement measurement2 = new Measurement();
         measurement2.setId(2L);
         measurement2.setCreatedAt(dayBeforeYesterday);
-        measurement2.setWaterLevelDistance(100);
+        measurement2.setTankFullness(100);
 
         Measurement measurement3 = new Measurement();
         measurement3.setId(3L);
         measurement3.setCreatedAt(dayBeforeYesterday);
-        measurement3.setWaterLevelDistance(200);
+        measurement3.setTankFullness(200);
 
         Measurement measurement4 = new Measurement();
         measurement4.setId(4L);
         measurement4.setCreatedAt(yesterday);
-        measurement4.setWaterLevelDistance(140);
+        measurement4.setTankFullness(140);
 
         Measurement measurement5 = new Measurement();
         measurement5.setId(5L);
         measurement5.setCreatedAt(yesterday);
-        measurement5.setWaterLevelDistance(20);
+        measurement5.setTankFullness(20);
 
         Measurement measurement6 = new Measurement();
         measurement6.setId(6L);
         measurement6.setCreatedAt(yesterday);
-        measurement6.setWaterLevelDistance(40);
+        measurement6.setTankFullness(40);
 
         Measurement measurement7 = new Measurement();
         measurement7.setId(7L);
         measurement7.setCreatedAt(today);
-        measurement7.setWaterLevelDistance(140);
+        measurement7.setTankFullness(140);
 
         Measurement measurement8 = new Measurement();
         measurement8.setId(8L);
         measurement8.setCreatedAt(today);
-        measurement8.setWaterLevelDistance(20);
+        measurement8.setTankFullness(20);
 
         Measurement measurement9 = new Measurement();
         measurement9.setId(9L);
         measurement9.setCreatedAt(today);
-        measurement9.setWaterLevelDistance(40);
+        measurement9.setTankFullness(40);
 
         List<Measurement> measurements = List.of(
                 measurement1,

@@ -29,7 +29,7 @@ class MeasurementMapperTest {
         Measurement measurement = measurementMapper.measurementDtoToMeasurement(measurementDTO);
 
         assertEquals(measurement.getId(), measurementDTO.getId());
-        assertEquals(measurement.getWaterLevelDistance(), measurementDTO.getWaterLevelDistance() - Distance.maxWaterLevel());
+        assertEquals(measurement.getTankFullness(), measurementDTO.getTankFullness());
         assertEquals(measurement.getCreatedAt(), measurementDTO.getCreatedAt());
     }
 
@@ -37,14 +37,14 @@ class MeasurementMapperTest {
     void measurementToMeasurementDTO() {
         Measurement measurement = new Measurement();
         measurement.setId(1L);
-        measurement.setWaterLevelDistance(13);
+        measurement.setTankFullness(13);
         measurement.setCreatedAt(new Date());
 
         MeasurementDTO measurementDTO = measurementMapper.measurementToMeasurementDto(measurement);
 
         assertEquals(measurement.getId(), measurementDTO.getId());
-        assertEquals(measurement.getWaterLevelDistance(), measurementDTO.getWaterLevelDistance());
+        assertEquals(measurement.getTankFullness(), measurementDTO.getTankFullness());
         assertEquals(measurement.getCreatedAt(), measurementDTO.getCreatedAt());
-        assertEquals(94, measurementDTO.getTankFullness());
+        assertEquals(13, measurementDTO.getTankFullness());
     }
 }
